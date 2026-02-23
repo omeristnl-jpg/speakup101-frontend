@@ -493,6 +493,38 @@ src="https://www.facebook.com/tr?id=672589269245822&ev=PageView&noscript=1"
     font-family: 'Space Mono', monospace;
   }
 
+  /* TIMING TOGGLE */
+  .timing-toggle-wrap { margin-bottom: 16px; }
+  .timing-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #0b1120;
+    border: 1px solid #1f2937;
+    padding: 4px;
+    gap: 4px;
+  }
+  .timing-option {
+    padding: 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #4b5563;
+    transition: all 0.2s;
+    user-select: none;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .timing-option.active {
+    background: var(--blue);
+    color: white;
+  }
+  .timing-option:hover:not(.active) {
+    color: #9ca3af;
+    background: #1f2937;
+  }
+  .datetime-grid { transition: opacity 0.3s; }
+
   /* ANIMATIONS */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
@@ -635,17 +667,26 @@ src="https://www.facebook.com/tr?id=672589269245822&ev=PageView&noscript=1"
           </select>
         </div>
 
-        <div class="datetime-grid">
+        <!-- Timing Toggle -->
+        <div class="timing-toggle-wrap">
+          <div class="timing-toggle" id="timingToggle">
+            <div class="timing-option active" id="opt-asap">⚡ Contact Me ASAP</div>
+            <div class="timing-option" id="opt-schedule">📅 Schedule a Time</div>
+          </div>
+        </div>
+
+        <!-- Date/Time fields (disabled by default) -->
+        <div class="datetime-grid" id="datetimeFields" style="opacity:0.35;pointer-events:none;transition:all 0.3s;">
           <div class="form-group">
             <label>Preferred Date</label>
-            <input type="date" id="prefDate" required>
+            <input type="date" id="prefDate">
           </div>
           <div class="form-group">
             <label>Preferred Time</label>
-            <input type="time" id="prefTime" required>
+            <input type="time" id="prefTime">
           </div>
         </div>
-        <p class="form-note">* We'll confirm within 24 hours via WhatsApp</p>
+        <p class="form-note" id="formNote">* We'll reach out on WhatsApp as soon as possible</p>
 
         <div class="form-group" style="margin-top:16px;">
           <label>Anything else? (optional)</label>
@@ -748,6 +789,37 @@ src="https://www.facebook.com/tr?id=672589269245822&ev=PageView&noscript=1"
 </div>
 
 <script>
+  // ── Timing toggle ──────────────────────────────────────────────────────────
+  let isASAP = true;
+
+  function toggleTiming() {
+    // do nothing — handled by individual option clicks
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('opt-asap').addEventListener('click', () => {
+      isASAP = true;
+      document.getElementById('opt-asap').classList.add('active');
+      document.getElementById('opt-schedule').classList.remove('active');
+      const fields = document.getElementById('datetimeFields');
+      fields.style.opacity = '0.35';
+      fields.style.pointerEvents = 'none';
+      document.getElementById('prefDate').value = '';
+      document.getElementById('prefTime').value = '';
+      document.getElementById('formNote').textContent = "* We'll reach out on WhatsApp as soon as possible";
+    });
+
+    document.getElementById('opt-schedule').addEventListener('click', () => {
+      isASAP = false;
+      document.getElementById('opt-schedule').classList.add('active');
+      document.getElementById('opt-asap').classList.remove('active');
+      const fields = document.getElementById('datetimeFields');
+      fields.style.opacity = '1';
+      fields.style.pointerEvents = 'auto';
+      document.getElementById('formNote').textContent = "* We'll confirm within 24 hours via WhatsApp";
+    });
+  });
+
   // ── Config — swap this URL once you deploy to Railway ──────────────────────
   const API_URL = 'https://speakup101-backend-production.up.railway.app/api/book';
   // ───────────────────────────────────────────────────────────────────────────
@@ -778,8 +850,10 @@ src="https://www.facebook.com/tr?id=672589269245822&ev=PageView&noscript=1"
       {id: 'phone', val: phone},
       {id: 'challenge', val: challenge},
       {id: 'sessionType', val: sessionType},
-      {id: 'prefDate', val: prefDate},
-      {id: 'prefTime', val: prefTime},
+      ...(isASAP ? [] : [
+        {id: 'prefDate', val: prefDate},
+        {id: 'prefTime', val: prefTime},
+      ]),
     ];
 
     let hasError = false;
@@ -804,7 +878,7 @@ src="https://www.facebook.com/tr?id=672589269245822&ev=PageView&noscript=1"
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fname, lname, email, phone, challenge, sessionType, prefDate, prefTime, notes }),
+        body: JSON.stringify({ fname, lname, email, phone, challenge, sessionType, prefDate: isASAP ? 'ASAP' : prefDate, prefTime: isASAP ? 'ASAP' : prefTime, notes }),
       });
 
       const data = await response.json();

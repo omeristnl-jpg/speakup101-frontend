@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpeakUp101 — Book Your Free Call</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0b1120;
+    --navy2: #111827;
+    --blue: #1d4ed8;
+    --blue-light: #3b82f6;
+    --yellow: #fbbf24;
+    --red: #dc2626;
+    --white: #f9fafb;
+    --muted: #6b7280;
+    --border: #1f2937;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, #1d4ed820 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 79px, #ffffff04 79px, #ffffff04 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, #ffffff04 79px, #ffffff04 80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    padding: 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  .nav-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    border: 1px solid var(--yellow);
+    padding: 6px 12px;
+    opacity: 0.8;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .hero-left { }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--blue-light);
+  }
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 0.92;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+  }
+  .hero-headline .line2 {
+    color: var(--yellow);
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 80px;
+  }
+  .hero-headline .line3 { color: var(--white); }
+  .hero-sub {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #9ca3af;
+    max-width: 420px;
+    margin-bottom: 36px;
+  }
+  .hero-sub strong { color: var(--white); font-weight: 600; }
+
+  .proof-row {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .proof-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .proof-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--white);
+    line-height: 1;
+  }
+  .proof-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .proof-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 0 60px #1d4ed815, 0 20px 40px #00000040;
+  }
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--yellow));
+  }
+  .form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .form-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .form-subtitle span {
+    color: var(--yellow);
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: #0b1120;
+    border: 1px solid #1f2937;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: #374151; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--blue-light);
+    background: #0d1526;
+  }
+  .form-group select {
+    cursor: pointer;
+    color: var(--white);
+  }
+  .form-group select option { background: #0b1120; }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* Date/Time picker */
+  .datetime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .form-group input[type="date"],
+  .form-group input[type="time"] {
+    color-scheme: dark;
+  }
+
+  .form-note {
+    font-size: 11px;
+    color: #374151;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--blue);
+    color: white;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    padding: 18px;
+    cursor: pointer;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: 0.2s;
+  }
+  .submit-btn:hover { background: #2563eb; }
+  .submit-btn:hover::after { background: rgba(255,255,255,0.05); }
+  .submit-btn:active { transform: scale(0.99); }
+
+  .form-secure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: #374151;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* SUCCESS STATE */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .success-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+  }
+  .success-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .success-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .success-details {
+    margin-top: 24px;
+    background: #0b1120;
+    border: 1px solid #1f2937;
+    padding: 20px;
+    text-align: left;
+  }
+  .success-detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid #1f2937;
+  }
+  .success-detail-row:last-child { border-bottom: none; }
+  .success-detail-label { color: var(--muted); }
+  .success-detail-value { color: var(--white); font-weight: 500; }
+
+  /* WHAT TO EXPECT */
+  .expect-section {
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+  }
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .step {
+    background: var(--navy);
+    padding: 36px 28px;
+    position: relative;
+  }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: #1f2937;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .step-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--white);
+  }
+  .step-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .step-accent {
+    position: absolute;
+    top: 0;
+    left: 28px;
+    width: 40px;
+    height: 2px;
+    background: var(--blue);
+  }
+
+  /* FOR WHO */
+  .forswho {
+    padding: 0 0 80px;
+  }
+  .forswho-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .forswho-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+  .forswho-title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--yellow);
+  }
+  .who-list { list-style: none; }
+  .who-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #1f2937;
+    font-size: 14px;
+    color: #d1d5db;
+    line-height: 1.5;
+  }
+  .who-list li:last-child { border-bottom: none; }
+  .who-icon { color: var(--blue-light); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* PRICING STRIP */
+  .pricing-strip {
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    padding: 40px;
+    margin-bottom: 80px;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 40px;
+    align-items: center;
+    position: relative;
+  }
+  .pricing-strip::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--yellow), var(--blue));
+  }
+  .pricing-divider { background: #1f2937; height: 100%; }
+  .pricing-block { text-align: center; }
+  .pricing-type {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .pricing-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .pricing-main sup { font-size: 24px; vertical-align: super; }
+  .pricing-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .pricing-options { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .pricing-option {
+    font-size: 12px;
+    color: #9ca3af;
+    border: 1px solid #1f2937;
+    padding: 6px 12px;
+  }
+  .pricing-option strong { color: var(--white); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #374151;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-left { animation: fadeUp 0.6s ease both; }
+  .form-card { animation: fadeUp 0.6s ease 0.15s both; }
+  .expect-section { animation: fadeUp 0.4s ease both; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; padding: 40px 0; }
+    .hero-headline { font-size: 52px; }
+    .hero-headline .line2 { font-size: 58px; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .forswho-grid { grid-template-columns: 1fr; }
+    .pricing-strip { grid-template-columns: 1fr; }
+    .pricing-divider { height: 1px; width: 100%; }
+    .form-row { grid-template-columns: 1fr; }
+    .datetime-grid { grid-template-columns: 1fr; }
+    .proof-row { flex-wrap: wrap; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav>
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 90" height="44">
+        <defs>
+          <linearGradient id="navBubble" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3B82F6"/>
+            <stop offset="100%" style="stop-color:#1D4ED8"/>
+          </linearGradient>
+          <linearGradient id="nav101" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#60A5FA"/>
+            <stop offset="100%" style="stop-color:#3B82F6"/>
+          </linearGradient>
+          <filter id="navGlow"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#3B82F6" flood-opacity="0.35"/></filter>
+        </defs>
+        <!-- Icon -->
+        <g filter="url(#navGlow)">
+          <rect x="4" y="4" width="66" height="60" rx="13" fill="url(#navBubble)"/>
+          <polygon points="14,64 34,64 22,82" fill="#1D4ED8"/>
+        </g>
+        <!-- Wave bars -->
+        <rect x="18" y="20" width="7" height="24" rx="3.5" fill="white" opacity="0.92"/>
+        <rect x="30" y="14" width="7" height="36" rx="3.5" fill="white" opacity="0.92"/>
+        <rect x="42" y="24" width="7" height="18" rx="3.5" fill="white" opacity="0.92"/>
+        <rect x="54" y="18" width="7" height="30" rx="3.5" fill="white" opacity="0.92"/>
+        <!-- Wordmark -->
+        <text x="84" y="56" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="42" letter-spacing="-1" fill="#F8FAFC">Speak</text>
+        <text x="232" y="56" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="300" font-size="42" letter-spacing="-1" fill="#F8FAFC">Up</text>
+        <text x="282" y="56" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="42" letter-spacing="-2" fill="url(#nav101)">101</text>
+      </svg>
+    </div>
+    <div class="nav-badge">Free 20-Min Call</div>
+  </nav>
+</div>
+
+<!-- HERO -->
+<div class="container">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Zoom · Private & Group Sessions</div>
+      <div class="hero-headline">
+        <div>You Don't</div>
+        <div class="line2">Freeze.</div>
+        <div class="line3">You Train.</div>
+      </div>
+      <p class="hero-sub">
+        Most people with a speaking problem don't have a <strong>language problem</strong> — they have a <strong>confidence problem</strong>. We fix that. Live, on Zoom, one rep at a time.
+      </p>
+      <div class="proof-row">
+        <div class="proof-item">
+          <div class="proof-num">1:1</div>
+          <div class="proof-label">Private Sessions</div>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-item">
+          <div class="proof-num">Group</div>
+          <div class="proof-label">From $29/mo</div>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-item">
+          <div class="proof-num">Free</div>
+          <div class="proof-label">First Call</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card" id="bookingForm">
+      <div class="form-title">Book Your Free Call</div>
+      <div class="form-subtitle">20 minutes · No pressure · <span>100% Free</span></div>
+
+      <form id="theForm" onsubmit="handleSubmit(event)" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="fname" placeholder="Ahmed" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lname" placeholder="Hassan" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label>WhatsApp / Phone</label>
+          <input type="tel" id="phone" placeholder="+971 50 000 0000" required>
+        </div>
+
+        <div class="form-group">
+          <label>Your Main Challenge</label>
+          <select id="challenge" required>
+            <option value="" disabled selected>Pick the one that fits you most</option>
+            <option>I freeze when speaking to strangers</option>
+            <option>My English is fine but I go blank mid-sentence</option>
+            <option>I avoid conversations because I'm nervous</option>
+            <option>I struggle in job interviews or meetings</option>
+            <option>I know what to say but can't get the words out</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>What session type interests you?</label>
+          <select id="sessionType" required>
+            <option value="" disabled selected>Choose one</option>
+            <option>1-on-1 Private Sessions</option>
+            <option>Group Sessions (Weekly)</option>
+            <option>Both — not sure yet</option>
+          </select>
+        </div>
+
+        <div class="datetime-grid">
+          <div class="form-group">
+            <label>Preferred Date</label>
+            <input type="date" id="prefDate" required>
+          </div>
+          <div class="form-group">
+            <label>Preferred Time</label>
+            <input type="time" id="prefTime" required>
+          </div>
+        </div>
+        <p class="form-note">* We'll confirm within 24 hours via WhatsApp</p>
+
+        <div class="form-group" style="margin-top:16px;">
+          <label>Anything else? (optional)</label>
+          <textarea id="notes" placeholder="Tell us a bit more about your situation..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">BOOK MY FREE CALL →</button>
+
+        <div class="form-secure">
+          <span>🔒</span>
+          <span>YOUR INFO IS PRIVATE · NO SPAM · EVER</span>
+        </div>
+      </form>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">✅</div>
+        <div class="success-title">You're Booked.</div>
+        <p class="success-sub">We'll confirm your session within 24 hours via WhatsApp. Get ready — this is where it starts.</p>
+        <div class="success-details" id="successDetails"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT TO EXPECT -->
+<div class="container">
+  <div class="expect-section">
+    <div class="section-tag">How It Works</div>
+    <div class="section-title">3 Steps. Zero Judgment.</div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-accent"></div>
+        <div class="step-num">01</div>
+        <div class="step-title">Book the Free Call</div>
+        <div class="step-body">Fill the form. We confirm via WhatsApp within 24 hours and set up your 20-minute Zoom session. No prep needed.</div>
+      </div>
+      <div class="step">
+        <div class="step-accent"></div>
+        <div class="step-num">02</div>
+        <div class="step-title">We Find Your Freeze Point</div>
+        <div class="step-body">In the call we identify exactly where and why you freeze. No generic advice — we pinpoint your specific pattern.</div>
+      </div>
+      <div class="step">
+        <div class="step-accent"></div>
+        <div class="step-num">03</div>
+        <div class="step-title">Train Until It's Gone</div>
+        <div class="step-body">1-on-1 or group sessions on Zoom. Real conversation reps. You don't think your way out of a freeze — you train your way out.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOR WHO -->
+  <div class="forswho">
+    <div class="forswho-grid">
+      <div>
+        <div class="section-tag">Who This Is For</div>
+        <div class="forswho-title">This Is <em>Exactly</em><br>For You If...</div>
+      </div>
+      <div>
+        <ul class="who-list">
+          <li><span class="who-icon">→</span> You speak English as a second language and go blank under pressure</li>
+          <li><span class="who-icon">→</span> You rehearse conversations in your head but forget everything when it matters</li>
+          <li><span class="who-icon">→</span> You avoid talking to strangers, in meetings, or on calls</li>
+          <li><span class="who-icon">→</span> You feel your brain is smarter than your mouth</li>
+          <li><span class="who-icon">→</span> You want to speak with confidence but don't know how to train it</li>
+          <li><span class="who-icon">→</span> You've tried YouTube videos and they didn't fix the actual freeze</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing-strip">
+    <div class="pricing-block">
+      <div class="pricing-type">1-on-1 Private</div>
+      <div class="pricing-main"><sup>$</sup>50</div>
+      <div class="pricing-desc">Single session · or save with a package</div>
+      <div class="pricing-options">
+        <div class="pricing-option"><strong>5 sessions</strong> $199</div>
+        <div class="pricing-option"><strong>10 sessions</strong> $349</div>
+      </div>
+    </div>
+    <div class="pricing-divider"></div>
+    <div class="pricing-block">
+      <div class="pricing-type">Group Sessions</div>
+      <div class="pricing-main"><sup>$</sup>29</div>
+      <div class="pricing-desc">Per month · weekly Zoom group</div>
+      <div class="pricing-options">
+        <div class="pricing-option"><strong>Once/week</strong> $29/mo</div>
+        <div class="pricing-option"><strong>Twice/week</strong> $59/mo</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>© 2025 SPEAKUP101</div>
+    <div>ALL SESSIONS VIA ZOOM · WORLDWIDE</div>
+  </footer>
+</div>
+
+<script>
+  // ── Config — swap this URL once you deploy to Railway ──────────────────────
+  const API_URL = 'https://speakup101-backend-production.up.railway.app/api/book';
+  // ───────────────────────────────────────────────────────────────────────────
+
+  // Set minimum date to today
+  const dateInput = document.getElementById('prefDate');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('min', today);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const fname       = document.getElementById('fname').value.trim();
+    const lname       = document.getElementById('lname').value.trim();
+    const email       = document.getElementById('email').value.trim();
+    const phone       = document.getElementById('phone').value.trim();
+    const challenge   = document.getElementById('challenge').value;
+    const sessionType = document.getElementById('sessionType').value;
+    const prefDate    = document.getElementById('prefDate').value;
+    const prefTime    = document.getElementById('prefTime').value;
+    const notes       = document.getElementById('notes').value.trim();
+
+    // Validate required fields
+    const fields = [
+      {id: 'fname', val: fname},
+      {id: 'lname', val: lname},
+      {id: 'email', val: email},
+      {id: 'phone', val: phone},
+      {id: 'challenge', val: challenge},
+      {id: 'sessionType', val: sessionType},
+      {id: 'prefDate', val: prefDate},
+      {id: 'prefTime', val: prefTime},
+    ];
+
+    let hasError = false;
+    fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (!f.val) {
+        el.style.borderColor = '#dc2626';
+        el.addEventListener('input', () => el.style.borderColor = '', {once: true});
+        el.addEventListener('change', () => el.style.borderColor = '', {once: true});
+        hasError = true;
+      }
+    });
+    if (hasError) return;
+
+    // Lock button while submitting
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'SENDING...';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fname, lname, email, phone, challenge, sessionType, prefDate, prefTime, notes }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Something went wrong.');
+      }
+
+      // Format date for success screen
+      const dateObj = new Date(`${prefDate}T${prefTime}`);
+      const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const formattedTime = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      // Show success screen
+      document.getElementById('theForm').style.display = 'none';
+      const success = document.getElementById('successScreen');
+      success.style.display = 'block';
+
+      document.getElementById('successDetails').innerHTML = `
+        <div class="success-detail-row">
+          <span class="success-detail-label">Name</span>
+          <span class="success-detail-value">${fname} ${lname}</span>
+        </div>
+        <div class="success-detail-row">
+          <span class="success-detail-label">Email</span>
+          <span class="success-detail-value">${email}</span>
+        </div>
+        <div class="success-detail-row">
+          <span class="success-detail-label">Requested Date</span>
+          <span class="success-detail-value">${formattedDate}</span>
+        </div>
+        <div class="success-detail-row">
+          <span class="success-detail-label">Requested Time</span>
+          <span class="success-detail-value">${formattedTime}</span>
+        </div>
+        <div class="success-detail-row">
+          <span class="success-detail-label">Session Type</span>
+          <span class="success-detail-value">${sessionType}</span>
+        </div>
+      `;
+
+    } catch (err) {
+      // Show error under button
+      btn.textContent = 'BOOK MY FREE CALL →';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+
+      let errorEl = document.getElementById('formError');
+      if (!errorEl) {
+        errorEl = document.createElement('p');
+        errorEl.id = 'formError';
+        errorEl.style.cssText = 'color:#ef4444;font-size:13px;text-align:center;margin-top:10px;';
+        btn.parentNode.insertBefore(errorEl, btn.nextSibling);
+      }
+      errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+    }
+  }
+</script>
+</body>
+</html>
